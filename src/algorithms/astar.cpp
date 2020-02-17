@@ -1,26 +1,30 @@
+#ifdef __EMSCRIPTEN__
+#include <emscripten/bind.h>
+#endif
+#include <algorithm>
 #include <limits>
 #include <map>
 #include <set>
 #include <vector>
-#include <algorithm>
 #include "../graph.hpp"
 
 namespace graphy {
 namespace algorithms {
+
+#ifdef __EMSCRIPTEN__
+using namespace emscripten;
+#endif
+
 class AStar {
+ private:
   Graph _graph;
 
+ public:
   AStar(Graph graph) {
     _graph = graph;
   }
 
   ~AStar() {}
-
-  void initializeGScore(std::map<Vertex, int> gScore) {
-    for (std::map<Vertex, int>::iterator it = gScore.begin(); it != gScore.end(); ++it) {
-      it->second = std::numeric_limits<int>::max();
-    }
-  }
 
   // Based on https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
 
@@ -74,6 +78,13 @@ class AStar {
     return {};
   }
 
+ private:
+   void initializeGScore(std::map<Vertex, int> gScore) {
+    for (std::map<Vertex, int>::iterator it = gScore.begin(); it != gScore.end(); ++it) {
+      it->second = std::numeric_limits<int>::max();
+    }
+  }
+
   bool vectorContainsVertex(std::vector<Vertex> vector, Vertex vertex) {
     for (std::vector<Vertex>::iterator it = vector.begin(); it != vector.end(); ++it) {
       Vertex v = *it;
@@ -106,6 +117,15 @@ class AStar {
     return totalPath;
   }
 };
+
+#ifdef __EMSCRIPTEN__
+// Binding code
+EMSCRIPTEN_BINDINGS(AStart) {
+  class_<AStart>("AStart")
+      .constructor<Graph>()
+      .function("run", &AStar::run);
+}
+#endif
 
 };  // namespace algorithms
 };  // namespace graphy

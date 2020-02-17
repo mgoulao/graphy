@@ -10,9 +10,18 @@ class Graphy {
 		Graphy._Graph = graph;
 	}
 
+	static get AStar() {
+		return Graphy._AStar;
+	}
+
+	static set AStar(astar) {
+		Graphy._AStar = astar;
+	}
+
   static init(onLoadCallback) {
     Module["onRuntimeInitialized"] = () => {
 			Graphy.Graph = Module.Graph;
+			Graphy.AStar = Module.AStar;
 			onLoadCallback();
 		};
   }
