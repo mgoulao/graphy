@@ -26,7 +26,7 @@ AStar::~AStar() {}
 
 // Based on https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
 
-std::vector<Edge> AStar::run(int originVertexId , int destinationVertexId) {
+std::vector<Edge> AStar::run(int originVertexId, int destinationVertexId) {
   Vertex* origin = _graph.getVertex(originVertexId);
   Vertex* destination = _graph.getVertex(destinationVertexId);
 
@@ -51,7 +51,6 @@ std::vector<Edge> AStar::run(int originVertexId , int destinationVertexId) {
 
   while (openSet.size()) {
     Vertex* current = openSet.at(0);  // the node in openSet having the lowest fScore[] value
-    std::cout << current->getId() << "\n";
     if (*current == *destination) return reconstruct_path(cameFrom, current);
     std::vector<Vertex*>::iterator openSetIterator = openSet.begin();
     openSet.erase(openSetIterator);
@@ -118,6 +117,7 @@ std::vector<Edge> AStar::reconstruct_path(std::map<Vertex*, Vertex*> cameFrom, V
     Edge edge = current->getEdge(*previous);
     totalPath.push_back(edge);
   }
+  std::reverse(totalPath.begin(), totalPath.end());
   return totalPath;
 }
 

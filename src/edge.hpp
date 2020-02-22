@@ -9,6 +9,7 @@ class Edge {
   Vertex* _from;
   Vertex* _to;
   int _cost = 0;
+
  public:
   Edge();
   Edge(Vertex* from, Vertex* to, int cost);
@@ -19,6 +20,8 @@ class Edge {
   int getCost();
   Vertex* getOtherVertex(Vertex vertex);
   void display();
+
+
 };
 }  // namespace graphy
 

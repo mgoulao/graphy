@@ -29,6 +29,7 @@ class Graph {
   bool hasEdge(int fromVertexID, int toVertexID);
   void addVertex(int id);
   void addEdge(int fromVertexID, int toVertexID);
+  void addEdge(int fromVertexID, int toVertexID, int cost);
   Vertex* getVertex(int id);
   Vertex createVertex(int id);
   std::list<graphy::Vertex> getVertices();

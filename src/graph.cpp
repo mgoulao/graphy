@@ -65,6 +65,10 @@ Vertex* Graph::getVertex(int id) {
 }
 
 void Graph::addEdge(int fromVertexID, int toVertexID) {
+  addEdge(fromVertexID, toVertexID, 0);
+}
+
+void Graph::addEdge(int fromVertexID, int toVertexID, int cost) {
   if (hasEdge(fromVertexID, toVertexID)) return;
 
   addVertex(fromVertexID);
@@ -73,16 +77,10 @@ void Graph::addEdge(int fromVertexID, int toVertexID) {
   Vertex* fromVertex = getVertex(fromVertexID);
   Vertex* toVertex = getVertex(toVertexID);
 
-  _edges.push_back(Edge(fromVertex, toVertex, _edges.size()));
+  _edges.push_back(Edge(fromVertex, toVertex, cost));
 
   fromVertex->addEdge(&_edges.back());
   toVertex->addEdge(&_edges.back());
-
-  // std::cout << &_edges.back() << "\n";
-  // std::cout << _edges.back().getFromVertex()->getEdges().size() << "\n";
-  // std::cout << fromVertex->getEdges().size() << "\n";
-  // std::cout << _edges.back().getFromVertex()->getEdges().size() << "\n";
-  // std::cout << "====\n";
 }
 
 std::list<graphy::Vertex> Graph::getVertices() {
@@ -94,17 +92,19 @@ std::list<graphy::Edge> Graph::getEdges() {
 }
 
 void Graph::display() {
+  std::cout << "=========  GRAPH  ==========\n";
+  std::cout << "Vertices:\n";
   for (std::list<Vertex>::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
     Vertex vertex = *it;
     std::cout << vertex.getId() << ",";
   }
   std::cout << "\n";
-
+  std::cout << "Edges:\n";
   for (std::list<Edge>::iterator it = _edges.begin(); it != _edges.end(); it++) {
     Edge edge = *it;
     edge.display();
   }
-  std::cout << "===========\n";
+  std::cout << "============================\n";
 }
 
 #ifdef __EMSCRIPTEN__
@@ -113,7 +113,8 @@ EMSCRIPTEN_BINDINGS(Graph) {
   class_<Graph>("Graph")
       .constructor<>()
       .function("display", &Graph::display)
-      .function("addEdge", &Graph::addEdge)
+      .function("addEdge", select_overload<void(int, int)>(&Graph::addEdge))
+      .function("addEdgeWithCost", select_overload<void(int, int, int)>(&Graph::addEdge))
       .function("addVertex", &Graph::addVertex)
       .function("hasEdge", &Graph::hasEdge);
 }

@@ -22,6 +22,10 @@ EMLDFLAGS = --bind
 EMTARGET = $(DIST_DIR)$(NAME)_module.js
 WASM = $(DIST_DIR)$(NAME)_module.wasm
 
+ifeq (${RELEASE},1)
+	 EMFLAGS += -O3
+endif
+
 DEBUGFLAGS =
 ifeq (${DEBUG},1)
    DEBUGFLAGS += -g
