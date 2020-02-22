@@ -2,6 +2,7 @@
 #define GRAPHY_GRAPH_H
 
 #include <vector>
+#include <list>
 #include "edge.hpp"
 #include "vertex.hpp"
 
@@ -14,8 +15,8 @@ enum GraphType {
 
 class Graph {
  private:
-  std::vector<graphy::Vertex> _vertices;
-  std::vector<graphy::Edge> _edges;
+  std::list<graphy::Vertex> _vertices;
+  std::list<graphy::Edge> _edges;
   GraphType _type;
 
  public:
@@ -28,9 +29,10 @@ class Graph {
   bool hasEdge(int fromVertexID, int toVertexID);
   void addVertex(int id);
   void addEdge(int fromVertexID, int toVertexID);
-  Vertex getVertex(int id);
-  std::vector<graphy::Vertex> getVertices();
-  std::vector<graphy::Edge> getEdges();
+  Vertex* getVertex(int id);
+  Vertex createVertex(int id);
+  std::list<graphy::Vertex> getVertices();
+  std::list<graphy::Edge> getEdges();
   void display();
 };
 

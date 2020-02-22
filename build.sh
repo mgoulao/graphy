@@ -12,11 +12,13 @@ if [[ $BUILD_CPP == $1 ]];
 then
 	echo $CPP_TARGET
 	cd src
+	make clean
 	make
 elif [[ $BUILD_JS == $1 ]];
 then
 	echo $JS_TARGET
 	cd src
+	make clean
 	make wasm
 else
 	show_usage

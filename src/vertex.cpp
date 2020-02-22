@@ -1,4 +1,5 @@
 #include "vertex.hpp"
+#include <iostream>
 #include <vector>
 #include "edge.hpp"
 
@@ -22,8 +23,8 @@ Edge Vertex::getEdge(Vertex vertex) {
   int targetId = vertex.getId();
   for (std::vector<Edge*>::iterator it = _edges.begin(); it != _edges.end(); ++it) {
     Edge edge = **it;
-    int fromId = edge.getFromVertex().getId();
-    int toId = edge.getToVertex().getId();
+    int fromId = edge.getFromVertex()->getId();
+    int toId = edge.getToVertex()->getId();
     if (targetId == fromId || targetId == toId) return edge;
   }
   return {};
@@ -39,6 +40,5 @@ int Vertex::getId() const {
 
 bool operator==(const Vertex& lhs, const Vertex& rhs) { return lhs.getId() == rhs.getId(); }
 bool operator<(const Vertex& lhs, const Vertex& rhs) { return lhs.getId() < rhs.getId(); }
-
 
 }  // namespace graphy

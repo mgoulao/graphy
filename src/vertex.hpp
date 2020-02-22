@@ -8,7 +8,7 @@ class Edge;
 class Vertex {
  private:
   int _id;
-  std::vector<Edge *> _edges;
+  std::vector<Edge*> _edges;
 
  public:
   Vertex();
@@ -20,7 +20,6 @@ class Vertex {
   std::vector<Edge*> getEdges();
   friend bool operator==(const Vertex& lhs, const Vertex& rhs);
   friend bool operator<(const Vertex& lhs, const Vertex& rhs);
-
 };
 }  // namespace graphy
 

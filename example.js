@@ -8,7 +8,9 @@ Graphy.init(() => {
 	graph.addEdge(5,4);
 	graph.addEdge(2,4);
 	const astar = new Graphy.AStar(graph);
-	astar.run();
+	const a = astar.run(1, 4);
+	a.push_back(2);
+	console.log(a[0]);
 	graph.display();
 
 	// Clean instances

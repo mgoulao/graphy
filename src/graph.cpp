@@ -14,6 +14,7 @@ using namespace emscripten;
 #endif
 
 Graph::Graph() {
+  addVertex(0);
   _type = DIRECTED;
 }
 
@@ -27,53 +28,83 @@ GraphType Graph::getType() {
 }
 
 bool Graph::hasVertex(int id) {
+  for (std::list<Vertex>::iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
+    Vertex vertex = *it;
+    int currentId = vertex.getId();
+    if (currentId == id) return true;
+  }
   return false;
 }
 
 bool Graph::hasEdge(int fromVertexID, int toVertexID) {
+  for (std::list<Edge>::iterator it = _edges.begin(); it != _edges.end(); ++it) {
+    Edge edge = *it;
+    int fromId = edge.getFromVertex()->getId();
+    int toId = edge.getFromVertex()->getId();
+    if (fromId == fromVertexID && toId == toVertexID) return true;
+  }
   return false;
 }
 
 void Graph::addVertex(int id) {
-  if (this->hasVertex(id)) return;
-
-  Vertex vertex = Vertex(id);
-  _vertices.push_back(vertex);
+  for (std::list<Vertex>::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
+    Vertex& vertex = *it;
+    int currentId = vertex.getId();
+    if (currentId == id) return;
+  }
+  _vertices.push_back(Vertex(id));
 }
 
-Vertex Graph::getVertex(int id) {
-  for (std::vector<Vertex>::iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
-    int currentId = it->getId();
-    if (currentId == id) return *it;
+Vertex* Graph::getVertex(int id) {
+  for (std::list<Vertex>::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
+    Vertex& vertex = *it;
+    int currentId = vertex.getId();
+    if (currentId == id) return &vertex;
   }
-  return Vertex(id);
+  return &_vertices.front();
 }
 
 void Graph::addEdge(int fromVertexID, int toVertexID) {
-  if (this->hasEdge(fromVertexID, toVertexID)) return;
+  if (hasEdge(fromVertexID, toVertexID)) return;
 
-  Vertex fromVertex = this->getVertex(fromVertexID);
-  Vertex toVertex = this->getVertex(toVertexID);
+  addVertex(fromVertexID);
+  addVertex(toVertexID);
 
-  _vertices.push_back(fromVertex);
-  _vertices.push_back(toVertex);
+  Vertex* fromVertex = getVertex(fromVertexID);
+  Vertex* toVertex = getVertex(toVertexID);
 
-  Edge edge = Edge(fromVertex, toVertex);
-  _edges.push_back(edge);
+  _edges.push_back(Edge(fromVertex, toVertex, _edges.size()));
+
+  fromVertex->addEdge(&_edges.back());
+  toVertex->addEdge(&_edges.back());
+
+  // std::cout << &_edges.back() << "\n";
+  // std::cout << _edges.back().getFromVertex()->getEdges().size() << "\n";
+  // std::cout << fromVertex->getEdges().size() << "\n";
+  // std::cout << _edges.back().getFromVertex()->getEdges().size() << "\n";
+  // std::cout << "====\n";
 }
 
-std::vector<graphy::Vertex> Graph::getVertices() {
+std::list<graphy::Vertex> Graph::getVertices() {
   return _vertices;
 }
 
-std::vector<graphy::Edge> Graph::getEdges() {
+std::list<graphy::Edge> Graph::getEdges() {
   return _edges;
 }
 
 void Graph::display() {
-  for (std::vector<Edge>::iterator it = _edges.begin(); it != _edges.end(); ++it) {
-    it->display();
+  for (std::list<Vertex>::iterator it = _vertices.begin(); it != _vertices.end(); it++) {
+    Vertex vertex = *it;
+    std::cout << vertex.getId() << ",";
   }
+  std::cout << "\n";
+
+  for (std::list<Edge>::iterator it = _edges.begin(); it != _edges.end(); it++) {
+    Edge edge = *it;
+    edge.display();
+  }
+  std::cout << "===========\n";
 }
 
 #ifdef __EMSCRIPTEN__
@@ -83,7 +114,6 @@ EMSCRIPTEN_BINDINGS(Graph) {
       .constructor<>()
       .function("display", &Graph::display)
       .function("addEdge", &Graph::addEdge)
-      .function("getVertex", &Graph::getVertex)
       .function("addVertex", &Graph::addVertex)
       .function("hasEdge", &Graph::hasEdge);
 }

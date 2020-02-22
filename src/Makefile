@@ -1,9 +1,12 @@
 SOURCES = vertex.cpp edge.cpp graph.cpp 
 SOURCES += algorithms/astar.cpp
-SOURCES += main.cpp 
 
 DIST_DIR = ../dist/
 NAME = graphy
+
+ifneq ($(MAKECMDGOALS),wasm)
+   SOURCES += main.cpp 
+endif
 
 # g++
 OBJS = $(SOURCES:%.cpp=%.o)
@@ -19,27 +22,33 @@ EMLDFLAGS = --bind
 EMTARGET = $(DIST_DIR)$(NAME)_module.js
 WASM = $(DIST_DIR)$(NAME)_module.wasm
 
+DEBUGFLAGS =
+ifeq (${DEBUG},1)
+   DEBUGFLAGS += -g
+	 EMFLAGS += 
+endif
+
 all: $(TARGET)
 wasm: $(EMTARGET)
 
-main.o: main.cpp graph.hpp
+main.o: main.cpp graph.hpp vertex.hpp
 graph.o: graph.cpp graph.hpp vertex.hpp edge.hpp
 edge.o: edge.cpp vertex.hpp edge.hpp
 vertex.o: vertex.cpp vertex.hpp
-algorithms/astar.o: algorithms/astar.cpp graph.hpp
+algorithms/astar.o: algorithms/astar.cpp graph.hpp   
 
 $(OBJS):
 ifeq ($(MAKECMDGOALS),wasm)
 	@echo $@
 	$(EMCC) $(EMFLAGS) -c -o $@ $< 
 else
-	$(CC) $(CFLAGS) -c -o $@ $< 
+	$(CC) $(CFLAGS) $(DEBUGFLAGS) -c -o $@ $< 
 endif
 
 # g++
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(DEBUGFLAGS) -o $(TARGET) $^ $(LDFLAGS)
 
 # wasm
 
@@ -50,14 +59,14 @@ clean:
 	@echo
 	@echo ----  Cleaning project ...  ----
 	@echo 
-	rm -f $(TARGET) $(OBJS) $(EMTARGET) $(WASM)
+	rm -f $(OBJS)
 	@echo
 	@echo ----  Very nice!  ----
 
-cleanObjects: 
+cleanAll: 
 	@echo
 	@echo ----  Cleaning objects ...  ----
 	@echo 
-	rm -f $(OBJS)
+	rm -f  $(TARGET) $(OBJS) $(WASM) $(EMTARGET)
 	@echo
 	@echo ----  Very nice!  ----

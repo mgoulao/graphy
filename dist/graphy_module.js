@@ -639,8 +639,8 @@ var wasmMemory;
 // In the wasm backend, we polyfill the WebAssembly object,
 // so this creates a (non-native-wasm) table for us.
 var wasmTable = new WebAssembly.Table({
-  'initial': 375,
-  'maximum': 375 + 0,
+  'initial': 398,
+  'maximum': 398 + 0,
   'element': 'anyfunc'
 });
 
@@ -1241,11 +1241,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5266800,
+    STACK_BASE = 5267600,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 23920,
-    DYNAMIC_BASE = 5266800,
-    DYNAMICTOP_PTR = 23760;
+    STACK_MAX = 24720,
+    DYNAMIC_BASE = 5267600,
+    DYNAMICTOP_PTR = 24560;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1769,7 +1769,7 @@ var ASM_CONSTS = {
 
 
 
-// STATICTOP = STATIC_BASE + 22896;
+// STATICTOP = STATIC_BASE + 23696;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -5969,6 +5969,26 @@ var ASM_CONSTS = {
       });
     }
 
+
+  function __emval_incref(handle) {
+      if (handle > 4) {
+          emval_handle_array[handle].refcount += 1;
+      }
+    }
+
+  
+  function requireRegisteredType(rawType, humanName) {
+      var impl = registeredTypes[rawType];
+      if (undefined === impl) {
+          throwBindingError(humanName + " has unknown type " + getTypeName(rawType));
+      }
+      return impl;
+    }function __emval_take_value(type, argv) {
+      type = requireRegisteredType(type, '_emval_take_value');
+      var v = type['readValueFromPointer'](argv);
+      return __emval_register(v);
+    }
+
   function _abort() {
       abort();
     }
@@ -5978,7 +5998,7 @@ var ASM_CONSTS = {
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 23760;
+      return 24560;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {
@@ -6632,19 +6652,13 @@ function intArrayToString(array) {
 // ASM_LIBRARY EXTERN PRIMITIVES: Int8Array,Int32Array
 
 var asmGlobalArg = {};
-var asmLibraryArg = { "__cxa_allocate_exception": ___cxa_allocate_exception, "__cxa_atexit": ___cxa_atexit, "__cxa_throw": ___cxa_throw, "__handle_stack_overflow": ___handle_stack_overflow, "__lock": ___lock, "__map_file": ___map_file, "__syscall91": ___syscall91, "__unlock": ___unlock, "_embind_register_bool": __embind_register_bool, "_embind_register_class": __embind_register_class, "_embind_register_class_constructor": __embind_register_class_constructor, "_embind_register_class_function": __embind_register_class_function, "_embind_register_emval": __embind_register_emval, "_embind_register_float": __embind_register_float, "_embind_register_integer": __embind_register_integer, "_embind_register_memory_view": __embind_register_memory_view, "_embind_register_std_string": __embind_register_std_string, "_embind_register_std_wstring": __embind_register_std_wstring, "_embind_register_void": __embind_register_void, "abort": _abort, "emscripten_get_sbrk_ptr": _emscripten_get_sbrk_ptr, "emscripten_memcpy_big": _emscripten_memcpy_big, "emscripten_resize_heap": _emscripten_resize_heap, "environ_get": _environ_get, "environ_sizes_get": _environ_sizes_get, "fd_close": _fd_close, "fd_read": _fd_read, "fd_seek": _fd_seek, "fd_write": _fd_write, "memory": wasmMemory, "setTempRet0": _setTempRet0, "strftime_l": _strftime_l, "table": wasmTable };
+var asmLibraryArg = { "__cxa_allocate_exception": ___cxa_allocate_exception, "__cxa_atexit": ___cxa_atexit, "__cxa_throw": ___cxa_throw, "__handle_stack_overflow": ___handle_stack_overflow, "__lock": ___lock, "__map_file": ___map_file, "__syscall91": ___syscall91, "__unlock": ___unlock, "_embind_register_bool": __embind_register_bool, "_embind_register_class": __embind_register_class, "_embind_register_class_constructor": __embind_register_class_constructor, "_embind_register_class_function": __embind_register_class_function, "_embind_register_emval": __embind_register_emval, "_embind_register_float": __embind_register_float, "_embind_register_integer": __embind_register_integer, "_embind_register_memory_view": __embind_register_memory_view, "_embind_register_std_string": __embind_register_std_string, "_embind_register_std_wstring": __embind_register_std_wstring, "_embind_register_void": __embind_register_void, "_emval_decref": __emval_decref, "_emval_incref": __emval_incref, "_emval_take_value": __emval_take_value, "abort": _abort, "emscripten_get_sbrk_ptr": _emscripten_get_sbrk_ptr, "emscripten_memcpy_big": _emscripten_memcpy_big, "emscripten_resize_heap": _emscripten_resize_heap, "environ_get": _environ_get, "environ_sizes_get": _environ_sizes_get, "fd_close": _fd_close, "fd_read": _fd_read, "fd_seek": _fd_seek, "fd_write": _fd_write, "memory": wasmMemory, "setTempRet0": _setTempRet0, "strftime_l": _strftime_l, "table": wasmTable };
 var asm = createWasm();
 Module["asm"] = asm;
 var ___wasm_call_ctors = Module["___wasm_call_ctors"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["__wasm_call_ctors"].apply(null, arguments)
-};
-
-var _main = Module["_main"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["main"].apply(null, arguments)
 };
 
 var ___errno_location = Module["___errno_location"] = function() {
@@ -6773,16 +6787,16 @@ var dynCall_iiiii = Module["dynCall_iiiii"] = function() {
   return Module["asm"]["dynCall_iiiii"].apply(null, arguments)
 };
 
-var dynCall_viijii = Module["dynCall_viijii"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["dynCall_viijii"].apply(null, arguments)
-};
-
 var dynCall_iii = Module["dynCall_iii"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["dynCall_iii"].apply(null, arguments)
+};
+
+var dynCall_viijii = Module["dynCall_viijii"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["dynCall_viijii"].apply(null, arguments)
 };
 
 var dynCall_jiji = Module["dynCall_jiji"] = function() {
@@ -7213,57 +7227,6 @@ dependenciesFulfilled = function runCaller() {
   if (!calledRun) dependenciesFulfilled = runCaller; // try this again later, after new deps are fulfilled
 };
 
-function callMain(args) {
-  assert(runDependencies == 0, 'cannot call main when async dependencies remain! (listen on Module["onRuntimeInitialized"])');
-  assert(__ATPRERUN__.length == 0, 'cannot call main when preRun functions remain to be called');
-
-  var entryFunction = Module['_main'];
-
-
-  args = args || [];
-
-  var argc = args.length+1;
-  var argv = stackAlloc((argc + 1) * 4);
-  HEAP32[argv >> 2] = allocateUTF8OnStack(thisProgram);
-  for (var i = 1; i < argc; i++) {
-    HEAP32[(argv >> 2) + i] = allocateUTF8OnStack(args[i - 1]);
-  }
-  HEAP32[(argv >> 2) + argc] = 0;
-
-
-  try {
-
-    Module['___set_stack_limit'](STACK_MAX);
-
-    var ret = entryFunction(argc, argv);
-
-
-    // In PROXY_TO_PTHREAD builds, we should never exit the runtime below, as execution is asynchronously handed
-    // off to a pthread.
-    // if we're not running an evented main loop, it's time to exit
-      exit(ret, /* implicit = */ true);
-  }
-  catch(e) {
-    if (e instanceof ExitStatus) {
-      // exit() throws this once it's done to make sure execution
-      // has been stopped completely
-      return;
-    } else if (e == 'unwind') {
-      // running an evented main loop, don't immediately exit
-      noExitRuntime = true;
-      return;
-    } else {
-      var toLog = e;
-      if (e && typeof e === 'object' && e.stack) {
-        toLog = [e, e.stack];
-      }
-      err('exception thrown: ' + toLog);
-      quit_(1, e);
-    }
-  } finally {
-    calledMain = true;
-  }
-}
 
 
 
@@ -7296,7 +7259,7 @@ function run(args) {
 
     if (Module['onRuntimeInitialized']) Module['onRuntimeInitialized']();
 
-    if (shouldRunNow) callMain(args);
+    assert(!Module['_main'], 'compiled without a main, but one is present. if you added it from JS, use Module["onRuntimeInitialized"]');
 
     postRun();
   }
@@ -7392,11 +7355,6 @@ if (Module['preInit']) {
     Module['preInit'].pop()();
   }
 }
-
-// shouldRunNow refers to calling main(), not run().
-var shouldRunNow = true;
-
-if (Module['noInitialRun']) shouldRunNow = false;
 
 
   noExitRuntime = true;
