@@ -6,7 +6,6 @@
 #include <limits>
 #include <list>
 #include <map>
-#include <set>
 #include <vector>
 #include "../graph.hpp"
 #include "astar.hpp"

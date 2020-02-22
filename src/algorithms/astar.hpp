@@ -1,10 +1,7 @@
 #ifndef GRAPHY_ASTAR_H
 #define GRAPHY_ASTAR_H
 
-#include <algorithm>
-#include <limits>
 #include <map>
-#include <set>
 #include <vector>
 #include "../graph.hpp"
 
