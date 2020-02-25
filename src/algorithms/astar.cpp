@@ -41,7 +41,7 @@ std::vector<Edge> AStar::run(int originVertexId, int destinationVertexId) {
 
   // For node n, fScore[n] := gScore[n] + h(n).
   static std::map<Vertex, int> fScore;  // map with default value of Infinity
-  fScore.insert({*origin, heuristic(origin, destination)});
+  fScore.insert({*origin, heuristic(*origin, *destination)});
   struct CompareVertices {
     bool operator()(Vertex* vertexA, Vertex* vertexB) {
       return fScore.at(*vertexA) < fScore.at(*vertexB);
@@ -65,7 +65,7 @@ std::vector<Edge> AStar::run(int originVertexId, int destinationVertexId) {
         // This path to neighbor is better than any previous one. Record it!
         cameFrom.insert({nextVertex, current});
         gScore.at(*nextVertex) = tentative_gScore;
-        fScore.insert({*nextVertex, gScore.at(*nextVertex) + heuristic(nextVertex, destination)});
+        fScore.insert({*nextVertex, gScore.at(*nextVertex) + heuristic(*nextVertex, *destination)});
         if (!vectorContainsVertex(openSet, nextVertex)) {
           openSet.push_back(nextVertex);
         }
@@ -103,7 +103,7 @@ int AStar::distanceBetween(Vertex* first, Vertex* second) {
   return std::numeric_limits<int>::max();
 }
 
-int AStar::heuristic(Vertex* origin, Vertex* destination) {
+int AStar::heuristic(Vertex origin, Vertex destination) {
   return 1;
 }
 

@@ -14,9 +14,10 @@ class AStar {
 
  public:
   AStar(Graph graph);
-  ~AStar();
+  virtual ~AStar();
 
-  std::vector<Edge> run(int originVertexId , int destinationVertexId);
+  std::vector<Edge> run(int originVertexId, int destinationVertexId);
+  virtual int heuristic(Vertex origin, Vertex destination);
 
  private:
   void initializeGScore(std::map<Vertex, int>* gScore);
@@ -24,8 +25,6 @@ class AStar {
   bool vectorContainsVertex(std::vector<Vertex*> vector, Vertex* vertex);
 
   int distanceBetween(Vertex* first, Vertex* second);
-
-  int heuristic(Vertex* origin, Vertex* destination);
 
   std::vector<Edge> reconstruct_path(std::map<Vertex*, Vertex*> cameFrom, Vertex* current);
 };

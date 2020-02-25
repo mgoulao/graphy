@@ -2,6 +2,7 @@ const Graphy = require("./dist/graphy.js");
 
 Graphy.init(() => {
 	// Example from https://www.youtube.com/watch?v=vP5TkF0xJgI
+	
 	const graph = new Graphy.Graph();
 	graph.addEdgeWithCost(1,2,6);
 	graph.addEdgeWithCost(1,10,3);
